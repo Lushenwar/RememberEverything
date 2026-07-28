@@ -8,8 +8,8 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              8/10 DONE   ║
-║  ████████████████████████░░░░░                          ║
+║  BUILD PROGRESS                              9/10 DONE   ║
+║  ███████████████████████████░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
@@ -19,16 +19,16 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ║  ── hardening ──────────────────────────────────────     ║
 ║  Phase 6: FSRS Spaced Repetition Engine         [DONE]   ║
 ║  Phase 7: Context-Switched Interleaving         [DONE]   ║
-║  Phase 8: Offline PWA & Sync Capabilities       [TODO]   ║
+║  Phase 8: Offline PWA & Sync Capabilities       [DONE]   ║
 ║  Phase 9: Analytics & Memory Decay Modeler      [TODO]   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 8 (Offline PWA & Sync Capabilities)
-Status: Phase 7 shipped — `lib/queue.ts` (groupByCategory, interleaveCategories,
-buildDailyQueue). Deepest-bucket greedy gives zero same-topic adjacencies
-unless one topic holds over half the queue. /review interleaves and flags each
-context switch. 80 tests green.
+Phase: 9 (Analytics & Memory Decay Modeler)
+Status: Phase 8 shipped — `lib/sync.ts` (LWW on review timestamp, danger zone
+5), `app/api/sync`, `lib/useSync.ts`, service worker + manifest + icons.
+Conflict resolution is covered by tests that actually run — no skipped or
+dormant checks. 90 tests green.
 
 Update this as you finish each step.
 
