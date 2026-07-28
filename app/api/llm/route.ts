@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { processRawContent } from '@/lib/ingestion';
 import { initialState } from '@/lib/interrogation_graph';
 import { llmAvailable } from '@/lib/llm';
-import { processUserExplanation } from '@/lib/tutor';
+import { evaluateUnderstanding, processUserExplanation } from '@/lib/tutor';
 import type { GraphNode } from '@/lib/types';
 
 export async function POST(req: Request) {
@@ -36,6 +36,15 @@ export async function POST(req: Request) {
           ? (body.history as { role: 'tutor' | 'learner'; text: string }[])
           : [];
         return NextResponse.json(await processUserExplanation(input, concept, state, history));
+      }
+      case 'assess': {
+        const concept = body.concept as GraphNode | undefined;
+        const input = typeof body.input === 'string' ? body.input : '';
+        if (!concept?.id || !input.trim()) {
+          return NextResponse.json({ error: 'concept and input are required' }, { status: 400 });
+        }
+        const state = (body.state as Parameters<typeof evaluateUnderstanding>[2]) ?? initialState();
+        return NextResponse.json(await evaluateUnderstanding(input, concept, state));
       }
       default:
         return NextResponse.json({ error: `unknown task: ${body.task}` }, { status: 400 });
