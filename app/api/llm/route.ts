@@ -1,6 +1,7 @@
 // Single server entry point for every LLM-backed engine call. Keeps
 // ANTHROPIC_API_KEY off the client; grows one case per phase.
 import { NextResponse } from 'next/server';
+import { MAX_INGEST_CHARS } from '@/lib/chunker';
 import { processRawContent } from '@/lib/ingestion';
 import { initialState } from '@/lib/interrogation_graph';
 import { llmAvailable } from '@/lib/llm';
@@ -20,6 +21,14 @@ export async function POST(req: Request) {
       case 'ingest': {
         const text = typeof body.text === 'string' ? body.text : '';
         if (!text.trim()) return NextResponse.json({ error: 'text is required' }, { status: 400 });
+        if (text.length > MAX_INGEST_CHARS) {
+          return NextResponse.json(
+            {
+              error: `material is ${text.length.toLocaleString()} characters; the limit is ${MAX_INGEST_CHARS.toLocaleString()}. Ingest it a section at a time — smaller batches also produce better-connected concepts.`,
+            },
+            { status: 413 },
+          );
+        }
         const category = typeof body.category === 'string' && body.category.trim()
           ? body.category.trim()
           : 'general';
