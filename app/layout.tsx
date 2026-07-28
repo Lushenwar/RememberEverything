@@ -20,7 +20,10 @@ export const metadata: Metadata = {
 };
 
 // Grows as phases land; a link here means the route exists.
-const NAV = [["/", "Graph"]] as const;
+const NAV = [
+  ["/", "Graph"],
+  ["/ingest", "Ingest"],
+] as const;
 
 export default function RootLayout({
   children,
