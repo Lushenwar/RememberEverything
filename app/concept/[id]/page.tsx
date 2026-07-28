@@ -28,6 +28,12 @@ export default function ConceptPage({ params }: { params: Promise<{ id: string }
         </p>
         <h1 className="mt-1 text-2xl font-medium">{node.title}</h1>
         <p className="mt-3 max-w-2xl text-muted">{node.summary}</p>
+        <Link
+          href={`/tutor/${node.id}`}
+          className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-medium text-background"
+        >
+          Explain it from memory
+        </Link>
       </header>
 
       <section>

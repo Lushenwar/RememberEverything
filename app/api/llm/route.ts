@@ -2,7 +2,10 @@
 // ANTHROPIC_API_KEY off the client; grows one case per phase.
 import { NextResponse } from 'next/server';
 import { processRawContent } from '@/lib/ingestion';
+import { initialState } from '@/lib/interrogation_graph';
 import { llmAvailable } from '@/lib/llm';
+import { processUserExplanation } from '@/lib/tutor';
+import type { GraphNode } from '@/lib/types';
 
 export async function POST(req: Request) {
   let body: { task?: string; [k: string]: unknown };
@@ -21,6 +24,18 @@ export async function POST(req: Request) {
           ? body.category.trim()
           : 'general';
         return NextResponse.json(await processRawContent(text, category));
+      }
+      case 'socratic': {
+        const concept = body.concept as GraphNode | undefined;
+        const input = typeof body.input === 'string' ? body.input : '';
+        if (!concept?.id || !input.trim()) {
+          return NextResponse.json({ error: 'concept and input are required' }, { status: 400 });
+        }
+        const state = (body.state as Parameters<typeof processUserExplanation>[2]) ?? initialState();
+        const history = Array.isArray(body.history)
+          ? (body.history as { role: 'tutor' | 'learner'; text: string }[])
+          : [];
+        return NextResponse.json(await processUserExplanation(input, concept, state, history));
       }
       default:
         return NextResponse.json({ error: `unknown task: ${body.task}` }, { status: 400 });
