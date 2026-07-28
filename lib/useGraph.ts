@@ -1,8 +1,8 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
-import { allNodes, putNodes } from './db';
-import { mergeNodes } from './graph';
-import type { GraphNode } from './types';
+import { allNodes, putNodes } from './db.ts';
+import { mergeNodes } from './graph.ts';
+import type { GraphNode } from './types.ts';
 
 /** Loads the whole graph from IndexedDB once, then keeps it in React state. */
 export function useGraph() {

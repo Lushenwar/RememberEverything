@@ -1,6 +1,6 @@
 // Pure knowledge-graph operations. No storage, no IO — safe to unit test.
 import { createEmptyCard } from 'ts-fsrs';
-import type { GraphEdge, GraphNode, StoredCard, TopologyType } from './types';
+import type { GraphEdge, GraphNode, StoredCard, TopologyType } from './types.ts';
 
 export function emptyCard(now = new Date()): StoredCard {
   const c = createEmptyCard(now);
