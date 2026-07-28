@@ -52,7 +52,12 @@ export function calculateNextReview(
   isCorrect = true,
 ): RecordLogItem {
   const rating = isCorrect ? frictionRating(timeTakenMs, hintsUsed) : Rating.Again;
-  return scheduler.repeat(currentCardState, now)[rating];
+  // ts-fsrs throws on a negative elapsed time. Offline replay and skewed device
+  // clocks both produce reviews dated before the card's last one, so clamp
+  // instead: an out-of-order review is worth zero elapsed days, not a crash.
+  const last = currentCardState.last_review;
+  const at = last && now.getTime() < last.getTime() ? last : now;
+  return scheduler.repeat(currentCardState, at)[rating];
 }
 
 export interface Attempt {

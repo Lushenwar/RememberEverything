@@ -8,8 +8,8 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              9/10 DONE   ║
-║  ███████████████████████████░░                          ║
+║  BUILD PROGRESS                             10/10 DONE   ║
+║  ██████████████████████████████  ALL PHASES COMPLETE     ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
@@ -20,15 +20,22 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ║  Phase 6: FSRS Spaced Repetition Engine         [DONE]   ║
 ║  Phase 7: Context-Switched Interleaving         [DONE]   ║
 ║  Phase 8: Offline PWA & Sync Capabilities       [DONE]   ║
-║  Phase 9: Analytics & Memory Decay Modeler      [TODO]   ║
+║  Phase 9: Analytics & Memory Decay Modeler      [DONE]   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 9 (Analytics & Memory Decay Modeler)
-Status: Phase 8 shipped — `lib/sync.ts` (LWW on review timestamp, danger zone
-5), `app/api/sync`, `lib/useSync.ts`, service worker + manifest + icons.
-Conflict resolution is covered by tests that actually run — no skipped or
-dormant checks. 90 tests green.
+Phase: Complete
+Status: All ten phases implemented and verified. 103 tests green via `npm test`,
+production build clean.
+
+No test is skipped or dormant. The engine modules are pure and take `now`,
+`rng`, and both sides of a merge as arguments, so every check — scheduling,
+interleaving, decay, sync conflict resolution — runs offline with no network,
+no browser, and no API key.
+
+Every LLM-backed path has a deterministic fallback, so the whole app is
+functional without ANTHROPIC_API_KEY; set it to enable grounded extraction,
+diagram generation, and the elaborative assessor.
 
 Update this as you finish each step.
 
