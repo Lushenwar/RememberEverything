@@ -8,11 +8,11 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              2/10 DONE   ║
-║  ██████░░░░░░░░░░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              3/10 DONE   ║
+║  █████████░░░░░░░░░░░░░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
-║  Phase 2: Dual Coding Auto-Generation           [TODO]   ║
+║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
 ║  Phase 3: Socratic Feynman Tutor Core           [TODO]   ║
 ║  Phase 4: Elaborative Assessment Engine         [TODO]   ║
 ║  Phase 5: Multi-Modal Prompt Generator          [TODO]   ║
@@ -24,12 +24,11 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 2 (Dual Coding Auto-Generation)
-Status: Phase 1 shipped — `lib/llm.ts` (server-only Anthropic client, claude-opus-5,
-structured outputs), `lib/chunker.ts` (pure chunking + edge resolution),
-`lib/ingestion.ts`, `lib/moe_router.ts`, `app/api/llm/route.ts`, `/ingest`.
-Every LLM path has a heuristic fallback, so the app works with no API key.
-16 tests green.
+Phase: 3 (Socratic Feynman Tutor Core)
+Status: Phase 2 shipped — `lib/diagram.ts` (mermaid sanitiser, deterministic
+fallback diagrams, whole-graph concept map), `lib/dualcoding.ts` (LLM diagram
+pass wired into ingestion), `app/Diagram.tsx` (lazy mermaid renderer).
+Every node gets a visual, LLM or not. 25 tests green; render verified in Chrome.
 
 Update this as you finish each step.
 

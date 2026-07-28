@@ -1,11 +1,15 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { graphToMermaid } from '@/lib/diagram';
 import { connectionDensity, edgesOf, orphans } from '@/lib/graph';
 import { useGraph } from '@/lib/useGraph';
+import Diagram from './Diagram';
 
 export default function GraphPage() {
   const { nodes, loading } = useGraph();
+  const [showMap, setShowMap] = useState(true);
   const density = connectionDensity(nodes);
   const stray = orphans(nodes).length;
 
@@ -47,6 +51,16 @@ export default function GraphPage() {
           Start review
         </Link>
       </header>
+
+      <section>
+        <button
+          onClick={() => setShowMap((v) => !v)}
+          className="text-sm text-muted transition-colors hover:text-foreground"
+        >
+          {showMap ? '− hide' : '+ show'} concept map
+        </button>
+        {showMap && <Diagram className="mt-3" source={graphToMermaid(nodes)} />}
+      </section>
 
       <ul className="grid gap-3 sm:grid-cols-2">
         {nodes.map((n) => (
