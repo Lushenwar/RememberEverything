@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import Diagram from '../Diagram';
-import { applyReview, dueQueue, formatDue } from '@/lib/fsrs';
+import { applyReview, formatDue } from '@/lib/fsrs';
+import { buildQueueFor } from '@/lib/queue';
 import { initialState, type Evaluation } from '@/lib/interrogation_graph';
 import { generateReviewPrompt, PromptType, type ReviewSession } from '@/lib/prompts';
 import type { GraphNode } from '@/lib/types';
@@ -24,11 +25,12 @@ export default function ReviewPage() {
   // queue under the learner. Phase 7 interleaves this ordering.
   const [startedAt] = useState(() => new Date());
   const queue = useMemo(
-    () => (loading ? [] : dueQueue(nodes, startedAt)),
+    () => (loading ? [] : buildQueueFor(nodes, startedAt)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [loading, startedAt],
   );
   const node = queue[index];
+  const switched = index > 0 && queue[index - 1]?.category !== node?.category;
 
   if (loading) return <p className="text-muted">Loading…</p>;
   if (queue.length === 0)
@@ -62,6 +64,7 @@ export default function ReviewPage() {
       node={node}
       all={nodes}
       position={`${index + 1} / ${queue.length}`}
+      switched={switched}
       onDone={async (updated) => {
         await save([updated]);
         setIndex((i) => i + 1);
@@ -74,11 +77,13 @@ function Card({
   node,
   all,
   position,
+  switched,
   onDone,
 }: {
   node: GraphNode;
   all: GraphNode[];
   position: string;
+  switched: boolean;
   onDone: (updated: GraphNode) => void | Promise<void>;
 }) {
   const [session] = useState<ReviewSession>(() => generateReviewPrompt(node, all));
@@ -131,7 +136,11 @@ function Card({
           {TYPE_LABEL[session.type]} recall
         </span>
         <span className="font-mono text-[11px] text-muted">
-          {position} · {node.category}
+          {position} ·{' '}
+          <span className={switched ? 'text-warn' : ''}>
+            {switched && '↻ '}
+            {node.category}
+          </span>
         </span>
       </header>
 

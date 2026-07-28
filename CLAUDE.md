@@ -8,8 +8,8 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              7/10 DONE   ║
-║  █████████████████████░░░░░░░░                          ║
+║  BUILD PROGRESS                              8/10 DONE   ║
+║  ████████████████████████░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
@@ -18,17 +18,17 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ║  Phase 5: Multi-Modal Prompt Generator          [DONE]   ║
 ║  ── hardening ──────────────────────────────────────     ║
 ║  Phase 6: FSRS Spaced Repetition Engine         [DONE]   ║
-║  Phase 7: Context-Switched Interleaving         [TODO]   ║
+║  Phase 7: Context-Switched Interleaving         [DONE]   ║
 ║  Phase 8: Offline PWA & Sync Capabilities       [TODO]   ║
 ║  Phase 9: Analytics & Memory Decay Modeler      [TODO]   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 7 (Context-Switched Interleaving)
-Status: Phase 6 shipped — `lib/fsrs.ts` (friction→rating per spec, card
-serialisation, applyReview, dueQueue, dueCounts, formatDue). /review is now
-due-driven and shows the next interval; the dashboard shows due counts.
-69 tests green.
+Phase: 8 (Offline PWA & Sync Capabilities)
+Status: Phase 7 shipped — `lib/queue.ts` (groupByCategory, interleaveCategories,
+buildDailyQueue). Deepest-bucket greedy gives zero same-topic adjacencies
+unless one topic holds over half the queue. /review interleaves and flags each
+context switch. 80 tests green.
 
 Update this as you finish each step.
 
