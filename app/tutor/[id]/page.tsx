@@ -19,6 +19,7 @@ interface Turn {
   text: string;
   mode?: SocraticMode;
   stage?: SocraticStage;
+  evaluation?: AgentResponse['evaluation'];
 }
 
 const MODE_LABEL: Record<SocraticMode, string> = {
@@ -26,6 +27,26 @@ const MODE_LABEL: Record<SocraticMode, string> = {
   [SocraticMode.Elaborative]: 'elaborative',
   [SocraticMode.GuidedDiscovery]: 'guided discovery',
 };
+
+function Assessment({ evaluation }: { evaluation: NonNullable<Turn['evaluation']> }) {
+  const claims = evaluation.unverifiedClaims ?? [];
+  const jargon = evaluation.jargon ?? [];
+  if (claims.length === 0 && jargon.length === 0 && !evaluation.gap) return null;
+
+  return (
+    <div className="mt-3 space-y-1 border-t border-border pt-3 text-xs text-muted">
+      <p>
+        coverage {Math.round(evaluation.coverage * 100)}%
+        {evaluation.source === 'heuristic' && ' · heuristic assessment (no API key)'}
+      </p>
+      {evaluation.gap && <p>gap: {evaluation.gap}</p>}
+      {claims.length > 0 && (
+        <p className="text-warn">not supported by your source: {claims.join('; ')}</p>
+      )}
+      {jargon.length > 0 && <p>used without explaining: {jargon.join(', ')}</p>}
+    </div>
+  );
+}
 
 export default function TutorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -64,7 +85,13 @@ export default function TutorPage({ params }: { params: Promise<{ id: string }> 
       if (!res.ok) throw new Error(data.error ?? 'the tutor failed to respond');
       setTurns((t) => [
         ...t,
-        { role: 'tutor', text: data.question, mode: data.mode, stage: data.stage },
+        {
+          role: 'tutor',
+          text: data.question,
+          mode: data.mode,
+          stage: data.stage,
+          evaluation: data.evaluation,
+        },
       ]);
       setState(data.state);
     } catch (e) {
@@ -128,6 +155,7 @@ export default function TutorPage({ params }: { params: Promise<{ id: string }> 
               </p>
             )}
             <p className={t.role === 'tutor' ? '' : 'text-muted'}>{t.text}</p>
+            {t.evaluation && <Assessment evaluation={t.evaluation} />}
           </div>
         ))}
         {busy && <p className="pl-4 text-sm text-muted">Interrogating…</p>}
