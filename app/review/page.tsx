@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import Diagram from '../Diagram';
+import { applyReview, dueQueue, formatDue } from '@/lib/fsrs';
 import { initialState, type Evaluation } from '@/lib/interrogation_graph';
 import { generateReviewPrompt, PromptType, type ReviewSession } from '@/lib/prompts';
 import type { GraphNode } from '@/lib/types';
@@ -19,18 +20,28 @@ const TYPE_LABEL: Record<PromptType, string> = {
 export default function ReviewPage() {
   const { nodes, loading, save } = useGraph();
   const [index, setIndex] = useState(0);
-  // ponytail: queue is every concept in graph order. Phase 6 makes it
-  // due-driven and phase 7 interleaves it.
-  const queue = useMemo(() => nodes, [nodes]);
+  // Frozen at mount: rescheduling a card mid-session must not reshuffle the
+  // queue under the learner. Phase 7 interleaves this ordering.
+  const [startedAt] = useState(() => new Date());
+  const queue = useMemo(
+    () => (loading ? [] : dueQueue(nodes, startedAt)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [loading, startedAt],
+  );
   const node = queue[index];
 
   if (loading) return <p className="text-muted">Loading…</p>;
   if (queue.length === 0)
     return (
       <div className="rounded-lg border border-border bg-surface p-10 text-center">
-        <p className="text-muted">Nothing to review yet.</p>
-        <Link href="/ingest" className="mt-4 inline-block text-sm text-accent">
-          Ingest some material →
+        <p className="text-muted">
+          {nodes.length === 0 ? 'Nothing to review yet.' : 'Nothing is due. Come back later.'}
+        </p>
+        <Link
+          href={nodes.length === 0 ? '/ingest' : '/'}
+          className="mt-4 inline-block text-sm text-accent"
+        >
+          {nodes.length === 0 ? 'Ingest some material →' : 'Back to the graph →'}
         </Link>
       </div>
     );
@@ -104,22 +115,12 @@ function Card({
     }
   }
 
-  function next() {
-    // ponytail: records the attempt only. Phase 6 turns this into an FSRS
-    // rating and reschedules the card from it.
-    onDone({
-      ...node,
-      history: [
-        ...node.history,
-        {
-          at: Date.now(),
-          rating: evaluation?.isCorrect ? 3 : 1,
-          timeTakenMs: Date.now() - session.startedAt,
-          hintsUsed: hintShown ? 1 : 0,
-          promptType: session.type,
-          intervalDays: 0,
-        },
-      ],
+  function reschedule(): GraphNode {
+    return applyReview(node, {
+      timeTakenMs: Date.now() - session.startedAt,
+      hintsUsed: hintShown ? 1 : 0,
+      promptType: session.type,
+      isCorrect: Boolean(evaluation?.isCorrect),
     });
   }
 
@@ -185,7 +186,8 @@ function Card({
             <p className="font-mono text-[11px] uppercase tracking-wider text-muted">
               {evaluation.isCorrect ? 'met the bar' : 'not yet'} · coverage{' '}
               {Math.round(evaluation.coverage * 100)}%
-              {evaluation.source === 'heuristic' && ' · heuristic'}
+              {evaluation.source === 'heuristic' && ' · heuristic'} ·{' '}
+              <span className="text-accent">{formatDue(reschedule())}</span>
             </p>
             {evaluation.gap && <p className="mt-2 text-sm text-muted">gap: {evaluation.gap}</p>}
             {evaluation.unverifiedClaims && evaluation.unverifiedClaims.length > 0 && (
@@ -208,7 +210,7 @@ function Card({
 
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={next}
+              onClick={() => onDone(reschedule())}
               className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-background"
             >
               Next concept
