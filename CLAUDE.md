@@ -8,8 +8,8 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              6/10 DONE   ║
-║  ██████████████████░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              7/10 DONE   ║
+║  █████████████████████░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
@@ -17,19 +17,18 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ║  Phase 4: Elaborative Assessment Engine         [DONE]   ║
 ║  Phase 5: Multi-Modal Prompt Generator          [DONE]   ║
 ║  ── hardening ──────────────────────────────────────     ║
-║  Phase 6: FSRS Spaced Repetition Engine         [TODO]   ║
+║  Phase 6: FSRS Spaced Repetition Engine         [DONE]   ║
 ║  Phase 7: Context-Switched Interleaving         [TODO]   ║
 ║  Phase 8: Offline PWA & Sync Capabilities       [TODO]   ║
 ║  Phase 9: Analytics & Memory Decay Modeler      [TODO]   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 6 (FSRS Spaced Repetition Engine)
-Status: Phase 5 shipped — `lib/prompts.ts` (four prompt types, weighted by the
-MoE router with the primary expert given double say, never repeating the
-previous type, structural prompts blanked out of the concept diagram) and
-`/review`. Review order is still graph order; phase 6 makes it due-driven.
-57 tests green.
+Phase: 7 (Context-Switched Interleaving)
+Status: Phase 6 shipped — `lib/fsrs.ts` (friction→rating per spec, card
+serialisation, applyReview, dueQueue, dueCounts, formatDue). /review is now
+due-driven and shows the next interval; the dashboard shows due counts.
+69 tests green.
 
 Update this as you finish each step.
 

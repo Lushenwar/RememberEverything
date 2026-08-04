@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { graphToMermaid } from '@/lib/diagram';
+import { dueCounts, formatDue, isDue } from '@/lib/fsrs';
 import { connectionDensity, edgesOf, orphans } from '@/lib/graph';
 import { useGraph } from '@/lib/useGraph';
 import Diagram from './Diagram';
@@ -12,6 +13,7 @@ export default function GraphPage() {
   const [showMap, setShowMap] = useState(true);
   const density = connectionDensity(nodes);
   const stray = orphans(nodes).length;
+  const counts = dueCounts(nodes);
 
   if (loading) return <p className="text-muted">Loading graph…</p>;
 
@@ -46,11 +48,19 @@ export default function GraphPage() {
         </div>
         <Link
           href="/review"
-          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-background"
+          className={`rounded-md px-4 py-2 text-sm font-medium ${
+            counts.due > 0
+              ? 'bg-accent text-background'
+              : 'border border-border text-muted'
+          }`}
         >
-          Start review
+          {counts.due > 0 ? `Review ${counts.due} due` : 'Nothing due'}
         </Link>
       </header>
+
+      <p className="font-mono text-[11px] text-muted">
+        {counts.fresh} new · {counts.learning} learning · {counts.review} in review
+      </p>
 
       <section>
         <button
@@ -77,7 +87,8 @@ export default function GraphPage() {
               </div>
               <p className="mt-2 line-clamp-3 text-sm text-muted">{n.summary}</p>
               <p className="mt-3 font-mono text-[11px] text-muted">
-                {n.dependencies.length} links · {n.history.length} reviews
+                {n.dependencies.length} links · {n.history.length} reviews ·{' '}
+                <span className={isDue(n) ? 'text-accent' : ''}>{formatDue(n)}</span>
               </p>
             </Link>
           </li>
