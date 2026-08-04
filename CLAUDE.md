@@ -8,10 +8,10 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              1/10 DONE   ║
-║  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              2/10 DONE   ║
+║  ██████░░░░░░░░░░░░░░░░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
-║  Phase 1: Concept Chunking & Ingestion          [TODO]   ║
+║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [TODO]   ║
 ║  Phase 3: Socratic Feynman Tutor Core           [TODO]   ║
 ║  Phase 4: Elaborative Assessment Engine         [TODO]   ║
@@ -24,11 +24,12 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 1 (Concept Chunking & Ingestion)
-Status: Phase 0 shipped — Next.js 16 App Router + Tailwind 4, `lib/types.ts`,
-`lib/graph.ts` (pure graph ops including density + orphan repair for danger
-zone 3), `lib/db.ts` (IndexedDB), graph and concept pages. 7 tests green via
-`npm test` (`node --test`, no test-framework dependency).
+Phase: 2 (Dual Coding Auto-Generation)
+Status: Phase 1 shipped — `lib/llm.ts` (server-only Anthropic client, claude-opus-5,
+structured outputs), `lib/chunker.ts` (pure chunking + edge resolution),
+`lib/ingestion.ts`, `lib/moe_router.ts`, `app/api/llm/route.ts`, `/ingest`.
+Every LLM path has a heuristic fallback, so the app works with no API key.
+16 tests green.
 
 Update this as you finish each step.
 
