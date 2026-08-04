@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import SyncBar from "./SyncBar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,16 @@ export const metadata: Metadata = {
   title: "Remember Everything",
   description:
     "A cognitive-science memory engine: dual coding, Feynman interrogation, FSRS scheduling.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Remember", statusBarStyle: "black-translucent" },
+  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0b0c10",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 // Grows as phases land; a link here means the route exists.
@@ -52,6 +63,9 @@ export default function RootLayout({
                   {label}
                 </Link>
               ))}
+            </div>
+            <div className="ml-auto">
+              <SyncBar />
             </div>
           </nav>
         </header>
