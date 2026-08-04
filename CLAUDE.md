@@ -8,14 +8,14 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              5/10 DONE   ║
-║  ███████████████░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              6/10 DONE   ║
+║  ██████████████████░░░░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
 ║  Phase 3: Socratic Feynman Tutor Core           [DONE]   ║
 ║  Phase 4: Elaborative Assessment Engine         [DONE]   ║
-║  Phase 5: Multi-Modal Prompt Generator          [TODO]   ║
+║  Phase 5: Multi-Modal Prompt Generator          [DONE]   ║
 ║  ── hardening ──────────────────────────────────────     ║
 ║  Phase 6: FSRS Spaced Repetition Engine         [TODO]   ║
 ║  Phase 7: Context-Switched Interleaving         [TODO]   ║
@@ -24,12 +24,12 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 5 (Multi-Modal Prompt Generator)
-Status: Phase 4 shipped — grounded LLM assessor (`buildAssessorPrompt`,
-`EVALUATION_SCHEMA`, `normalizeEvaluation`), jargon detection, and
-`evaluateUnderstanding()` in `lib/tutor.ts` with the heuristic as its floor.
-Unverified claims and borrowed jargon are surfaced in the tutor UI.
-47 tests green.
+Phase: 6 (FSRS Spaced Repetition Engine)
+Status: Phase 5 shipped — `lib/prompts.ts` (four prompt types, weighted by the
+MoE router with the primary expert given double say, never repeating the
+previous type, structural prompts blanked out of the concept diagram) and
+`/review`. Review order is still graph order; phase 6 makes it due-driven.
+57 tests green.
 
 Update this as you finish each step.
 

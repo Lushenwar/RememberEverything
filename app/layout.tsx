@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 const NAV = [
   ["/", "Graph"],
   ["/ingest", "Ingest"],
+  ["/review", "Review"],
 ] as const;
 
 export default function RootLayout({
