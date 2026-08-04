@@ -4,6 +4,7 @@
 // ponytail: the store is a JSON file on the server's disk. Correct for one
 // instance, which is what a single-user memory engine needs; swap the two
 // read/write helpers for Vercel Blob or Postgres if it ever runs multi-region.
+import { timingSafeEqual } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { NextResponse } from 'next/server';
@@ -11,6 +12,28 @@ import { mergeByLWW } from '@/lib/sync';
 import type { GraphNode } from '@/lib/types';
 
 const STORE = join(process.cwd(), '.data', 'sync.json');
+
+/**
+ * This endpoint reads and overwrites the entire graph, so it fails closed: with
+ * no SYNC_SECRET configured, sync is off rather than open to anyone who finds
+ * the URL. The secret is never shipped to the browser — the learner types the
+ * passphrase once and it is kept in their own IndexedDB.
+ */
+function authorize(req: Request): NextResponse | null {
+  const secret = process.env.SYNC_SECRET;
+  if (!secret) {
+    return NextResponse.json(
+      { error: 'sync is disabled: set SYNC_SECRET on the server to enable it' },
+      { status: 503 },
+    );
+  }
+
+  const given = Buffer.from(req.headers.get('x-sync-key') ?? '');
+  const expected = Buffer.from(secret);
+  // timingSafeEqual throws on a length mismatch, so check that first.
+  const ok = given.length === expected.length && timingSafeEqual(given, expected);
+  return ok ? null : NextResponse.json({ error: 'invalid sync key' }, { status: 401 });
+}
 
 async function read(): Promise<GraphNode[]> {
   try {
@@ -33,12 +56,18 @@ async function write(nodes: GraphNode[]): Promise<void> {
   return next;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const denied = authorize(req);
+  if (denied) return denied;
+
   const nodes = await read();
   return NextResponse.json({ nodes, syncedAt: Date.now() });
 }
 
 export async function POST(req: Request) {
+  const denied = authorize(req);
+  if (denied) return denied;
+
   let body: { nodes?: unknown };
   try {
     body = await req.json();

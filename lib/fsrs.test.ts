@@ -103,6 +103,23 @@ test('a lapse increments lapses and pulls the card back in', () => {
   assert.ok(daysBetween(graduated, new Date(lapsed.card.due)) < daysBetween(NOW, graduated));
 });
 
+test('an out-of-order review is clamped rather than throwing', () => {
+  // Offline replay and skewed device clocks both produce this.
+  const reviewed = applyReview(
+    concept(),
+    { timeTakenMs: 5_000, hintsUsed: 0, promptType: 'CAUSAL', isCorrect: true },
+    NOW,
+  );
+  const backwards = new Date(NOW.getTime() - 3 * 86_400_000);
+  const after = applyReview(
+    reviewed,
+    { timeTakenMs: 5_000, hintsUsed: 0, promptType: 'CAUSAL', isCorrect: true },
+    backwards,
+  );
+  assert.equal(after.card.reps, 2);
+  assert.ok(new Date(after.card.due).getTime() >= NOW.getTime(), 'must not schedule into the past');
+});
+
 test('new cards are due immediately; scheduled ones are not', () => {
   const fresh = concept();
   assert.ok(isDue(fresh, NOW));

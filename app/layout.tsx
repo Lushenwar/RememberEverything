@@ -35,6 +35,8 @@ const NAV = [
   ["/", "Graph"],
   ["/ingest", "Ingest"],
   ["/review", "Review"],
+  ["/stats", "Stats"],
+  ["/settings", "Settings"],
 ] as const;
 
 export default function RootLayout({

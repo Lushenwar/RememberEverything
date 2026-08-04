@@ -13,6 +13,12 @@ export interface Concept {
   relatedTitles: string[];
 }
 
+/**
+ * Trust boundary: without a cap, one paste of a whole textbook becomes a hung
+ * request and a large token bill. Roughly a long chapter.
+ */
+export const MAX_INGEST_CHARS = 60_000;
+
 /** Chunks that fall under this many words get folded into the previous one. */
 const MIN_WORDS = 12;
 

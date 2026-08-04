@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { MAX_INGEST_CHARS } from '@/lib/chunker';
 import { connectionDensity } from '@/lib/graph';
 import type { GraphNode, SubjectTopology } from '@/lib/types';
 import { useGraph } from '@/lib/useGraph';
@@ -68,7 +69,14 @@ export default function IngestPage() {
       </label>
 
       <label className="block">
-        <span className="text-sm text-muted">Raw material</span>
+        <span className="flex items-baseline justify-between text-sm text-muted">
+          <span>Raw material</span>
+          {text.length > MAX_INGEST_CHARS * 0.8 && (
+            <span className={text.length > MAX_INGEST_CHARS ? 'text-warn' : ''}>
+              {text.length.toLocaleString()} / {MAX_INGEST_CHARS.toLocaleString()} characters
+            </span>
+          )}
+        </span>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -81,7 +89,7 @@ export default function IngestPage() {
       <div className="flex items-center gap-3">
         <button
           onClick={ingest}
-          disabled={busy || !text.trim()}
+          disabled={busy || !text.trim() || text.length > MAX_INGEST_CHARS}
           className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
         >
           {busy ? 'Extracting…' : 'Extract concepts'}

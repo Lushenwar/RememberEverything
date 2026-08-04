@@ -7,8 +7,18 @@ import { changedSince, mergeByLWW } from './sync.ts';
 import type { GraphNode } from './types.ts';
 
 const LAST_SYNC = 'lastSyncedAt';
+const SYNC_KEY = 'syncKey';
 
-export type SyncState = 'idle' | 'syncing' | 'offline' | 'error';
+export type SyncState = 'idle' | 'syncing' | 'offline' | 'error' | 'unauthorized' | 'disabled';
+
+/** The passphrase lives in the learner's own IndexedDB, never in the bundle. */
+export function getSyncKey(): Promise<string | undefined> {
+  return kvGet<string>(SYNC_KEY);
+}
+
+export function setSyncKey(key: string): Promise<void> {
+  return kvSet(SYNC_KEY, key.trim());
+}
 
 export function useSync(onMerged?: (nodes: GraphNode[]) => void) {
   const [state, setState] = useState<SyncState>('idle');
@@ -49,9 +59,20 @@ export function useSync(onMerged?: (nodes: GraphNode[]) => void) {
       const local = await allNodes();
       const res = await fetch('/api/sync', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: {
+          'content-type': 'application/json',
+          'x-sync-key': (await getSyncKey()) ?? '',
+        },
         body: JSON.stringify({ nodes: changedSince(local, since) }),
       });
+      if (res.status === 401) {
+        setState('unauthorized');
+        return;
+      }
+      if (res.status === 503) {
+        setState('disabled');
+        return;
+      }
       if (!res.ok) throw new Error(`sync failed: ${res.status}`);
       const data: { nodes: GraphNode[]; syncedAt: number } = await res.json();
 
@@ -69,9 +90,10 @@ export function useSync(onMerged?: (nodes: GraphNode[]) => void) {
     }
   }, [onMerged]);
 
-  // Drain whatever queued up while the device was offline.
+  // Drain whatever queued up while the device was offline. Never retry a
+  // rejected key or a disabled server — that is a loop, not a recovery.
   useEffect(() => {
-    if (online && pending > 0 && state !== 'syncing') sync();
+    if (online && pending > 0 && state === 'idle') sync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [online]);
 
