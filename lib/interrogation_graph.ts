@@ -35,6 +35,12 @@ export interface Evaluation {
   gap: string;
   /** 0..1 how much of the concept the explanation actually covered. */
   coverage: number;
+  /** Claims or analogies the source text does not support (danger zone 2). */
+  unverifiedClaims?: string[];
+  /** Terms leaned on without being explained — borrowed words, not understanding. */
+  jargon?: string[];
+  /** Which assessor produced this. */
+  source?: 'llm' | 'heuristic';
 }
 
 export interface TutorState {

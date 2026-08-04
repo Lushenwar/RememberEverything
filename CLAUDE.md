@@ -8,13 +8,13 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              4/10 DONE   ║
-║  ████████████░░░░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              5/10 DONE   ║
+║  ███████████████░░░░░░░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
 ║  Phase 3: Socratic Feynman Tutor Core           [DONE]   ║
-║  Phase 4: Elaborative Assessment Engine         [TODO]   ║
+║  Phase 4: Elaborative Assessment Engine         [DONE]   ║
 ║  Phase 5: Multi-Modal Prompt Generator          [TODO]   ║
 ║  ── hardening ──────────────────────────────────────     ║
 ║  Phase 6: FSRS Spaced Repetition Engine         [TODO]   ║
@@ -24,11 +24,12 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 4 (Elaborative Assessment Engine)
-Status: Phase 3 shipped — `lib/interrogation_graph.ts` (pure state machine:
-stages, mode selection, grounded prompts, leak guard), `lib/assessment.ts`
-(heuristic evaluator / offline fallback), `lib/tutor.ts`, `lib/useSpeech.ts`
-(Web Speech dictation, danger zone 4), `/tutor/[id]`. 37 tests green.
+Phase: 5 (Multi-Modal Prompt Generator)
+Status: Phase 4 shipped — grounded LLM assessor (`buildAssessorPrompt`,
+`EVALUATION_SCHEMA`, `normalizeEvaluation`), jargon detection, and
+`evaluateUnderstanding()` in `lib/tutor.ts` with the heuristic as its floor.
+Unverified claims and borrowed jargon are surfaced in the tutor UI.
+47 tests green.
 
 Update this as you finish each step.
 
