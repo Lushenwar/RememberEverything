@@ -37,6 +37,12 @@ Every LLM-backed path has a deterministic fallback, so the whole app is
 functional without ANTHROPIC_API_KEY; set it to enable grounded extraction,
 diagram generation, and the elaborative assessor.
 
+Hardening beyond the spec: concepts can be edited and deleted, the graph can be
+exported and re-imported (it otherwise lives only in one browser), /api/sync
+fails closed without SYNC_SECRET, ingest is capped at a trust boundary, and the
+pre-commit hook is tracked in .githooks/ so a fresh clone enforces the
+workflow. See README.md.
+
 Update this as you finish each step.
 
 ## WHAT THIS FILE IS

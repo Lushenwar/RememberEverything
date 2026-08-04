@@ -1,0 +1,7 @@
+#!/bin/sh
+# Enforces the branch + PR workflow from CLAUDE.md.
+# Enable with: npm run hooks   (sets core.hooksPath to this directory)
+if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
+  echo "refusing to commit on main - use a branch + PR" >&2
+  exit 1
+fi

@@ -1,13 +1,95 @@
 'use client';
 
 import Link from 'next/link';
-import { use } from 'react';
+import { useRouter } from 'next/navigation';
+import { use, useState } from 'react';
 import { decayCurve, retrievability, type DecayPoint } from '@/lib/analytics';
 import { fallbackDiagram } from '@/lib/diagram';
 import { formatDue } from '@/lib/fsrs';
 import { neighbors } from '@/lib/graph';
+import type { GraphNode } from '@/lib/types';
 import { useGraph } from '@/lib/useGraph';
 import Diagram from '../../Diagram';
+
+/**
+ * Editing preserves the card and history — a typo in a title should not cost
+ * the learner their scheduling, which deleting and re-ingesting would.
+ */
+function ConceptEditor({
+  node,
+  onSave,
+  onCancel,
+}: {
+  node: GraphNode;
+  onSave: (updated: GraphNode) => void | Promise<void>;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = useState(node.title);
+  const [summary, setSummary] = useState(node.summary);
+  const [category, setCategory] = useState(node.category);
+  const [sourceText, setSourceText] = useState(node.sourceText);
+
+  const field = 'mt-1 w-full rounded-md border border-border bg-surface p-3 text-sm outline-none focus:border-accent';
+
+  return (
+    <div className="space-y-5">
+      <h1 className="text-xl font-medium">Edit concept</h1>
+
+      <label className="block">
+        <span className="text-sm text-muted">Title</span>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} className={field} />
+      </label>
+
+      <label className="block">
+        <span className="text-sm text-muted">Plain-language definition</span>
+        <textarea
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+          rows={3}
+          className={`${field} resize-y`}
+        />
+      </label>
+
+      <label className="block">
+        <span className="text-sm text-muted">Topic (used to interleave reviews)</span>
+        <input value={category} onChange={(e) => setCategory(e.target.value)} className={field} />
+      </label>
+
+      <label className="block">
+        <span className="text-sm text-muted">
+          Source — the tutor grades your answers against this text, so keep it accurate
+        </span>
+        <textarea
+          value={sourceText}
+          onChange={(e) => setSourceText(e.target.value)}
+          rows={8}
+          className={`${field} resize-y font-mono`}
+        />
+      </label>
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() =>
+            onSave({
+              ...node,
+              title: title.trim() || node.title,
+              summary: summary.trim(),
+              category: category.trim() || 'general',
+              sourceText: sourceText.trim(),
+            })
+          }
+          disabled={!title.trim()}
+          className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-background disabled:opacity-40"
+        >
+          Save
+        </button>
+        <button onClick={onCancel} className="text-sm text-muted hover:text-foreground">
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 /** The forgetting curve for this concept, next 90 days. */
 function DecayChart({ points }: { points: DecayPoint[] }) {
@@ -45,8 +127,11 @@ function DecayChart({ points }: { points: DecayPoint[] }) {
 
 export default function ConceptPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { nodes, loading } = useGraph();
+  const router = useRouter();
+  const { nodes, loading, save, remove } = useGraph();
   const node = nodes.find((n) => n.id === id);
+  const [editing, setEditing] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   if (loading) return <p className="text-muted">Loading…</p>;
   if (!node)
@@ -56,6 +141,19 @@ export default function ConceptPage({ params }: { params: Promise<{ id: string }
       </p>
     );
 
+  if (editing) {
+    return (
+      <ConceptEditor
+        node={node}
+        onCancel={() => setEditing(false)}
+        onSave={async (updated) => {
+          await save([updated]);
+          setEditing(false);
+        }}
+      />
+    );
+  }
+
   return (
     <article className="space-y-8">
       <header>
@@ -64,12 +162,47 @@ export default function ConceptPage({ params }: { params: Promise<{ id: string }
         </p>
         <h1 className="mt-1 text-2xl font-medium">{node.title}</h1>
         <p className="mt-3 max-w-2xl text-muted">{node.summary}</p>
-        <Link
-          href={`/tutor/${node.id}`}
-          className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-medium text-background"
-        >
-          Explain it from memory
-        </Link>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Link
+            href={`/tutor/${node.id}`}
+            className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-background"
+          >
+            Explain it from memory
+          </Link>
+          <button
+            onClick={() => setEditing(true)}
+            className="rounded-md border border-border px-3 py-2 text-sm text-muted hover:text-foreground"
+          >
+            Edit
+          </button>
+          {!confirming ? (
+            <button
+              onClick={() => setConfirming(true)}
+              className="text-sm text-muted hover:text-warn"
+            >
+              Delete
+            </button>
+          ) : (
+            <span className="flex items-center gap-2 text-sm">
+              <span className="text-warn">
+                Delete permanently, losing {node.history.length} review
+                {node.history.length === 1 ? '' : 's'}?
+              </span>
+              <button
+                onClick={async () => {
+                  await remove(node.id);
+                  router.push('/');
+                }}
+                className="rounded-md bg-warn px-3 py-1 text-sm font-medium text-background"
+              >
+                Delete
+              </button>
+              <button onClick={() => setConfirming(false)} className="text-sm text-muted">
+                Cancel
+              </button>
+            </span>
+          )}
+        </div>
       </header>
 
       <section>
