@@ -2,6 +2,7 @@
 // extracts concepts + topology; without a key the heuristic chunker runs
 // instead, so the app is fully usable offline.
 import { chunkText, conceptsToNodes, type Concept } from './chunker.ts';
+import { generateDiagrams } from './dualcoding.ts';
 import { ask, llmAvailable } from './llm.ts';
 import { classifyTopology } from './moe_router.ts';
 import type { GraphNode, SubjectTopology, TopologyType } from './types.ts';
@@ -91,7 +92,8 @@ export async function processRawContent(
         relatedTitles: c.relatedTitles,
       }));
       return {
-        nodes: conceptsToNodes(concepts, result.topology.type, category),
+        // Second pass: dual coding (CLAUDE.md §1 step 2).
+        nodes: await generateDiagrams(conceptsToNodes(concepts, result.topology.type, category)),
         topology: result.topology,
         usedLlm: true,
       };
@@ -100,7 +102,7 @@ export async function processRawContent(
 
   const topology = classifyTopology(text);
   return {
-    nodes: conceptsToNodes(chunkText(text), topology.type, category),
+    nodes: await generateDiagrams(conceptsToNodes(chunkText(text), topology.type, category)),
     topology,
     usedLlm: false,
   };

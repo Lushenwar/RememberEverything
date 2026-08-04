@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { use } from 'react';
+import { fallbackDiagram } from '@/lib/diagram';
 import { neighbors } from '@/lib/graph';
 import { useGraph } from '@/lib/useGraph';
+import Diagram from '../../Diagram';
 
 export default function ConceptPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -27,6 +29,14 @@ export default function ConceptPage({ params }: { params: Promise<{ id: string }
         <h1 className="mt-1 text-2xl font-medium">{node.title}</h1>
         <p className="mt-3 max-w-2xl text-muted">{node.summary}</p>
       </header>
+
+      <section>
+        <h2 className="text-sm font-medium">Visual encoding</h2>
+        <Diagram
+          className="mt-2"
+          source={node.visualSchema || fallbackDiagram(node, nodes)}
+        />
+      </section>
 
       <section>
         <h2 className="text-sm font-medium">Source</h2>

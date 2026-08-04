@@ -84,7 +84,9 @@ function deriveTitle(body: string): string {
 }
 
 function firstSentences(body: string, n: number): string {
-  const stripped = body.replace(/^\s{0,3}#{1,6}\s+/gm, '').trim();
+  // Drop heading lines whole — the heading already became the title, and
+  // leaving it here makes every summary start by repeating the title.
+  const stripped = body.replace(/^\s{0,3}#{1,6}\s+.*$/gm, '').trim();
   const sentences = stripped.match(/[^.!?]+[.!?]+(\s|$)/g);
   if (!sentences) return stripped.split('\n')[0].trim();
   return sentences.slice(0, n).join('').trim();

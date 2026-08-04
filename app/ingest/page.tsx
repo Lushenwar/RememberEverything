@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { connectionDensity } from '@/lib/graph';
 import type { GraphNode, SubjectTopology } from '@/lib/types';
 import { useGraph } from '@/lib/useGraph';
+import Diagram from '../Diagram';
 
 export default function IngestPage() {
   const router = useRouter();
@@ -108,6 +109,7 @@ export default function IngestPage() {
               <li key={n.id} className="border-l-2 border-border pl-3">
                 <p className="text-sm font-medium">{n.title}</p>
                 <p className="mt-1 text-sm text-muted">{n.summary}</p>
+                {n.visualSchema && <Diagram className="mt-2" source={n.visualSchema} />}
               </li>
             ))}
           </ul>

@@ -21,6 +21,13 @@ test('chunkText splits on markdown headings', () => {
   assert.ok(chunks[1].sourceText.includes('single elected leader'));
 });
 
+test('chunkText does not repeat the heading inside the summary', () => {
+  const [consensus] = chunkText(NOTES);
+  assert.equal(consensus.title, 'Consensus');
+  assert.ok(consensus.summary.startsWith('Consensus lets a distributed'), consensus.summary);
+  assert.ok(!consensus.summary.startsWith('Consensus Consensus'));
+});
+
 test('chunkText falls back to blank lines, then sentence groups', () => {
   assert.equal(chunkText('Alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu.\n\nOne two three four five six seven eight nine ten eleven twelve.').length, 2);
   const flowing = chunkText(
