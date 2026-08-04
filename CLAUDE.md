@@ -8,27 +8,40 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              1/10 DONE   ║
-║  ███░░░░░░░░░░░░░░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                             10/10 DONE   ║
+║  ██████████████████████████████  ALL PHASES COMPLETE     ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
-║  Phase 1: Concept Chunking & Ingestion          [TODO]   ║
-║  Phase 2: Dual Coding Auto-Generation           [TODO]   ║
-║  Phase 3: Socratic Feynman Tutor Core           [TODO]   ║
-║  Phase 4: Elaborative Assessment Engine         [TODO]   ║
-║  Phase 5: Multi-Modal Prompt Generator          [TODO]   ║
+║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
+║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
+║  Phase 3: Socratic Feynman Tutor Core           [DONE]   ║
+║  Phase 4: Elaborative Assessment Engine         [DONE]   ║
+║  Phase 5: Multi-Modal Prompt Generator          [DONE]   ║
 ║  ── hardening ──────────────────────────────────────     ║
-║  Phase 6: FSRS Spaced Repetition Engine         [TODO]   ║
-║  Phase 7: Context-Switched Interleaving         [TODO]   ║
-║  Phase 8: Offline PWA & Sync Capabilities       [TODO]   ║
-║  Phase 9: Analytics & Memory Decay Modeler      [TODO]   ║
+║  Phase 6: FSRS Spaced Repetition Engine         [DONE]   ║
+║  Phase 7: Context-Switched Interleaving         [DONE]   ║
+║  Phase 8: Offline PWA & Sync Capabilities       [DONE]   ║
+║  Phase 9: Analytics & Memory Decay Modeler      [DONE]   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 1 (Concept Chunking & Ingestion)
-Status: Phase 0 shipped — Next.js 16 App Router + Tailwind 4, `lib/types.ts`,
-`lib/graph.ts` (pure graph ops including density + orphan repair for danger
-zone 3), `lib/db.ts` (IndexedDB), graph and concept pages. 7 tests green via
-`npm test` (`node --test`, no test-framework dependency).
+Phase: Complete
+Status: All ten phases implemented and verified. 103 tests green via `npm test`,
+production build clean.
+
+No test is skipped or dormant. The engine modules are pure and take `now`,
+`rng`, and both sides of a merge as arguments, so every check — scheduling,
+interleaving, decay, sync conflict resolution — runs offline with no network,
+no browser, and no API key.
+
+Every LLM-backed path has a deterministic fallback, so the whole app is
+functional without ANTHROPIC_API_KEY; set it to enable grounded extraction,
+diagram generation, and the elaborative assessor.
+
+Hardening beyond the spec: concepts can be edited and deleted, the graph can be
+exported and re-imported (it otherwise lives only in one browser), /api/sync
+fails closed without SYNC_SECRET, ingest is capped at a trust boundary, and the
+pre-commit hook is tracked in .githooks/ so a fresh clone enforces the
+workflow. See README.md.
 
 Update this as you finish each step.
 

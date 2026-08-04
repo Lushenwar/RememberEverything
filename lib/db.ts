@@ -1,7 +1,7 @@
 // IndexedDB persistence. Two stores: `nodes` (the graph) and `kv` (everything else).
 // ponytail: whole graph is read into memory on load. Fine to ~10k concepts;
 // add an index + cursor queries if a user ever passes that.
-import type { GraphNode } from './types';
+import type { GraphNode } from './types.ts';
 
 const DB_NAME = 'remember-everything';
 const DB_VERSION = 1;
