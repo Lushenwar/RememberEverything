@@ -8,12 +8,12 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
-║  BUILD PROGRESS                              3/10 DONE   ║
-║  █████████░░░░░░░░░░░░░░░░░░░░                          ║
+║  BUILD PROGRESS                              4/10 DONE   ║
+║  ████████████░░░░░░░░░░░░░░░░░                          ║
 ║  Phase 0: Base App & Graph Setup                [DONE]   ║
 ║  Phase 1: Concept Chunking & Ingestion          [DONE]   ║
 ║  Phase 2: Dual Coding Auto-Generation           [DONE]   ║
-║  Phase 3: Socratic Feynman Tutor Core           [TODO]   ║
+║  Phase 3: Socratic Feynman Tutor Core           [DONE]   ║
 ║  Phase 4: Elaborative Assessment Engine         [TODO]   ║
 ║  Phase 5: Multi-Modal Prompt Generator          [TODO]   ║
 ║  ── hardening ──────────────────────────────────────     ║
@@ -24,11 +24,11 @@ No direct commits to `main`. Every change goes: `git checkout -b <branch>` → c
 ╚══════════════════════════════════════════════════════════╝
 ```
 
-Phase: 3 (Socratic Feynman Tutor Core)
-Status: Phase 2 shipped — `lib/diagram.ts` (mermaid sanitiser, deterministic
-fallback diagrams, whole-graph concept map), `lib/dualcoding.ts` (LLM diagram
-pass wired into ingestion), `app/Diagram.tsx` (lazy mermaid renderer).
-Every node gets a visual, LLM or not. 25 tests green; render verified in Chrome.
+Phase: 4 (Elaborative Assessment Engine)
+Status: Phase 3 shipped — `lib/interrogation_graph.ts` (pure state machine:
+stages, mode selection, grounded prompts, leak guard), `lib/assessment.ts`
+(heuristic evaluator / offline fallback), `lib/tutor.ts`, `lib/useSpeech.ts`
+(Web Speech dictation, danger zone 4), `/tutor/[id]`. 37 tests green.
 
 Update this as you finish each step.
 
